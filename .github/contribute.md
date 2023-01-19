@@ -1,5 +1,9 @@
 # **Contributing**
 
+## **Permissions**
+
+In GitHub you must change the repository settings: `settings -> actions[general] -> Allow GitHub Actions to create and approve pull requests reviews`
+
 ## **Tag Management**
 
 While unsable (major version < 1.0.0) expect the following commit patterns:
