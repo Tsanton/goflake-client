@@ -34,7 +34,7 @@ func Test_grant_role_database_privilege(t *testing.T) {
 		Owner:   "USERADMIN",
 	}
 	privilege := a.Grant{
-		Target:     &ag.DatabaseRoleGrant{RoleName: role.Name, DatabaseName: db.Name},
+		Target:     &ag.RoleDatabaseGrant{RoleName: role.Name, DatabaseName: db.Name},
 		Privileges: []enums.Privilege{enums.PrivilegeUsage},
 	}
 
@@ -49,9 +49,7 @@ func Test_grant_role_database_privilege(t *testing.T) {
 	i.ErrorFailNow(t, err)
 	assert.Equal(t, role.Name, res.RoleName)
 	assert.Len(t, res.Grants, 1)
-	dbUsage, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool {
-		return i.Privilege == enums.Privilege(enums.PrivilegeUsage.String())
-	})
+	dbUsage, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool { return i.Privilege == enums.PrivilegeUsage })
 	assert.True(t, ok)
 	assert.Equal(t, "SYSADMIN", dbUsage.GrantedBy)
 	assert.Equal(t, enums.SnowflakeObjectDatabase, dbUsage.GrantedOn)
@@ -75,7 +73,7 @@ func Test_grant_role_database_privileges(t *testing.T) {
 		Owner:   "USERADMIN",
 	}
 	privilege := a.Grant{
-		Target:     &ag.DatabaseRoleGrant{RoleName: role.Name, DatabaseName: db.Name},
+		Target:     &ag.RoleDatabaseGrant{RoleName: role.Name, DatabaseName: db.Name},
 		Privileges: []enums.Privilege{enums.PrivilegeUsage, enums.PrivilegeMonitor},
 	}
 
@@ -91,14 +89,12 @@ func Test_grant_role_database_privileges(t *testing.T) {
 	assert.Equal(t, role.Name, res.RoleName)
 	assert.Len(t, res.Grants, 2)
 
-	dbUsage, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool {
-		return i.Privilege == enums.Privilege(enums.PrivilegeUsage.String())
-	})
+	dbUsage, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool { return i.Privilege == enums.PrivilegeUsage })
 	assert.True(t, ok)
 	assert.Equal(t, "SYSADMIN", dbUsage.GrantedBy)
 	assert.Equal(t, enums.SnowflakeObjectDatabase, dbUsage.GrantedOn)
 
-	dbMonitor, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool { return i.Privilege == enums.Privilege(enums.PrivilegeMonitor.String()) })
+	dbMonitor, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool { return i.Privilege == enums.PrivilegeMonitor })
 	assert.True(t, ok)
 	assert.Equal(t, "SYSADMIN", dbMonitor.GrantedBy)
 	assert.Equal(t, enums.SnowflakeObjectDatabase, dbMonitor.GrantedOn)

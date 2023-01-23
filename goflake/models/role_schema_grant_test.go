@@ -40,7 +40,7 @@ func Test_grant_role_schema_privilege(t *testing.T) {
 		Owner:   "USERADMIN",
 	}
 	privilege := a.Grant{
-		Target:     &ag.SchemaRoleGrant{RoleName: role.Name, DatabaseName: db.Name, SchemaName: schema.Name},
+		Target:     &ag.RoleSchemaGrant{RoleName: role.Name, DatabaseName: db.Name, SchemaName: schema.Name},
 		Privileges: []enums.Privilege{enums.PrivilegeUsage},
 	}
 
@@ -56,9 +56,7 @@ func Test_grant_role_schema_privilege(t *testing.T) {
 	i.ErrorFailNow(t, err)
 	assert.Equal(t, role.Name, res.RoleName)
 	assert.Len(t, res.Grants, 1)
-	schemaUsage, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool {
-		return i.Privilege == enums.Privilege(enums.PrivilegeUsage.String())
-	})
+	schemaUsage, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool { return i.Privilege == enums.PrivilegeUsage })
 	assert.True(t, ok)
 	assert.Equal(t, "SYSADMIN", schemaUsage.GrantedBy)
 	assert.Equal(t, enums.SnowflakeObjectSchema, schemaUsage.GrantedOn)
@@ -88,7 +86,7 @@ func Test_grant_role_schema_privileges(t *testing.T) {
 		Owner:   "USERADMIN",
 	}
 	privilege := a.Grant{
-		Target:     &ag.SchemaRoleGrant{RoleName: role.Name, DatabaseName: db.Name, SchemaName: schema.Name},
+		Target:     &ag.RoleSchemaGrant{RoleName: role.Name, DatabaseName: db.Name, SchemaName: schema.Name},
 		Privileges: []enums.Privilege{enums.PrivilegeUsage, enums.PrivilegeMonitor},
 	}
 
@@ -105,14 +103,12 @@ func Test_grant_role_schema_privileges(t *testing.T) {
 	assert.Equal(t, role.Name, res.RoleName)
 	assert.Len(t, res.Grants, 2)
 
-	schemaUsage, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool {
-		return i.Privilege == enums.Privilege(enums.PrivilegeUsage.String())
-	})
+	schemaUsage, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool { return i.Privilege == enums.PrivilegeUsage })
 	assert.True(t, ok)
 	assert.Equal(t, "SYSADMIN", schemaUsage.GrantedBy)
 	assert.Equal(t, enums.SnowflakeObjectSchema, schemaUsage.GrantedOn)
 
-	schemaMonitor, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool { return i.Privilege == enums.Privilege(enums.PrivilegeMonitor.String()) })
+	schemaMonitor, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool { return i.Privilege == enums.PrivilegeMonitor })
 	assert.True(t, ok)
 	assert.Equal(t, "SYSADMIN", schemaMonitor.GrantedBy)
 	assert.Equal(t, enums.SnowflakeObjectSchema, schemaMonitor.GrantedOn)

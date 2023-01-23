@@ -29,7 +29,7 @@ func Test_grant_role_account_privilege(t *testing.T) {
 		Owner:   "USERADMIN",
 	}
 	privilege := a.Grant{
-		Target:     &ag.AccountRoleGrant{RoleName: role.Name},
+		Target:     &ag.RoleAccountGrant{RoleName: role.Name},
 		Privileges: []enums.Privilege{enums.PrivilegeCreateAccount},
 	}
 
@@ -64,7 +64,7 @@ func Test_grant_role_account_privileges(t *testing.T) {
 		Owner:   "USERADMIN",
 	}
 	privilege := a.Grant{
-		Target:     &ag.AccountRoleGrant{RoleName: role.Name},
+		Target:     &ag.RoleAccountGrant{RoleName: role.Name},
 		Privileges: []enums.Privilege{enums.PrivilegeCreateAccount, enums.PrivilegeCreateUser},
 	}
 
@@ -79,14 +79,12 @@ func Test_grant_role_account_privileges(t *testing.T) {
 	assert.Equal(t, role.Name, res.RoleName)
 	assert.Len(t, res.Grants, 2)
 
-	createAcc, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool {
-		return i.Privilege == enums.Privilege(enums.PrivilegeCreateAccount.String())
-	})
+	createAcc, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool { return i.Privilege == enums.PrivilegeCreateAccount })
 	assert.True(t, ok)
 	assert.Equal(t, "ACCOUNTADMIN", createAcc.GrantedBy)
 	assert.Equal(t, enums.SnowflakeObjectAccount, createAcc.GrantedOn)
 
-	createUser, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool { return i.Privilege == enums.Privilege(enums.PrivilegeCreateUser.String()) })
+	createUser, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool { return i.Privilege == enums.PrivilegeCreateUser })
 	assert.True(t, ok)
 	assert.Equal(t, "USERADMIN", createUser.GrantedBy)
 	assert.Equal(t, enums.SnowflakeObjectAccount, createUser.GrantedOn)

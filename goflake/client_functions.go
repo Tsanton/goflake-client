@@ -20,8 +20,7 @@ type executeScalarConstraint interface {
 
 func ExecuteScalar[T executeScalarConstraint](g *GoflakeClient, query string) (T, error) {
 	var ret T
-	res := g.db.QueryRow(query)
-	err := res.Scan(&ret)
+	err := g.db.Get(&ret, query)
 	if err != nil {
 		return ret, err
 	}

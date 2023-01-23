@@ -9,26 +9,26 @@ import (
 )
 
 var (
-	_ ISnowflakeGrant = &AccountRoleGrant{}
+	_ ISnowflakeGrant = &RoleAccountGrant{}
 )
 
-type AccountRoleGrant struct {
+type RoleAccountGrant struct {
 	RoleName string
 }
 
-func (r *AccountRoleGrant) GetGrantStatement(privileges []enum.Privilege) (string, int) {
+func (r *RoleAccountGrant) GetGrantStatement(privileges []enum.Privilege) (string, int) {
 	stringPrivileges := lo.Map(privileges, func(x enum.Privilege, index int) string { return x.String() })
 	privs := strings.Join(stringPrivileges, ", ")
 	return fmt.Sprintf("GRANT %[1]s ON ACCOUNT TO ROLE %[2]s;", privs, r.RoleName), 1
 }
 
-func (r *AccountRoleGrant) GetRevokeStatement(privileges []enum.Privilege) (string, int) {
+func (r *RoleAccountGrant) GetRevokeStatement(privileges []enum.Privilege) (string, int) {
 	stringPrivileges := lo.Map(privileges, func(x enum.Privilege, index int) string { return x.String() })
 	privs := strings.Join(stringPrivileges, ", ")
 	return fmt.Sprintf("REVOKE %[1]s ON ACCOUNT FROM ROLE %[2]s CASCADE;", privs, r.RoleName), 1
 }
 
-func (*AccountRoleGrant) validatePrivileges(privileges []enum.Privilege) bool {
+func (*RoleAccountGrant) validatePrivileges(privileges []enum.Privilege) bool {
 	allowedPrivileges := []enum.Privilege{
 		enum.PrivilegeCreateAccount,
 		enum.PrivilegeCreateDataExchangeListing,

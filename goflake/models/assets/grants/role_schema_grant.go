@@ -9,28 +9,28 @@ import (
 )
 
 var (
-	_ ISnowflakeGrant = &AccountRoleGrant{}
+	_ ISnowflakeGrant = &RoleSchemaGrant{}
 )
 
-type SchemaRoleGrant struct {
+type RoleSchemaGrant struct {
 	RoleName     string
 	DatabaseName string
 	SchemaName   string
 }
 
-func (r *SchemaRoleGrant) GetGrantStatement(privileges []enum.Privilege) (string, int) {
+func (r *RoleSchemaGrant) GetGrantStatement(privileges []enum.Privilege) (string, int) {
 	stringPrivileges := lo.Map(privileges, func(x enum.Privilege, index int) string { return x.String() })
 	priv := strings.Join(stringPrivileges, ", ")
 	return fmt.Sprintf("GRANT %[1]s ON SCHEMA %[2]s.%[3]s TO ROLE %[4]s;", priv, r.DatabaseName, r.SchemaName, r.RoleName), 1
 }
 
-func (r *SchemaRoleGrant) GetRevokeStatement(privileges []enum.Privilege) (string, int) {
+func (r *RoleSchemaGrant) GetRevokeStatement(privileges []enum.Privilege) (string, int) {
 	stringPrivileges := lo.Map(privileges, func(x enum.Privilege, index int) string { return x.String() })
 	priv := strings.Join(stringPrivileges, ", ")
 	return fmt.Sprintf("REVOKE %[1]s ON SCHEMA %[2]s.%[3]s FROM ROLE %[4]s CASCADE;", priv, r.DatabaseName, r.SchemaName, r.RoleName), 1
 }
 
-func (*SchemaRoleGrant) validatePrivileges(privileges []enum.Privilege) bool {
+func (*RoleSchemaGrant) validatePrivileges(privileges []enum.Privilege) bool {
 	allowedAccountPrivileges := []enum.Privilege{
 		enum.PrivilegeModify,
 		enum.PrivilegeMonitor,

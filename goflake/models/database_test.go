@@ -26,13 +26,6 @@ func Test_create_database(t *testing.T) {
 
 	/* Act */
 	i.ErrorFailNow(t, g.RegisterAsset(cli, &db, &stack))
-
-	// exists, err := g.ExecuteScalar[bool](cli, fmt.Sprintf("SHOW DATABASE "))
-
-	// /* Assert */
-	// if !exists || err != nil {
-	// 	t.Fail()
-	// }
 }
 
 func Test_describe_database(t *testing.T) {
