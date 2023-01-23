@@ -30,20 +30,13 @@ func (r *DatabaseRoleGrant) GetRevokeStatement(privileges []enum.Privilege) (str
 }
 
 func (*DatabaseRoleGrant) validatePrivileges(privileges []enum.Privilege) bool {
-	allowedAccountPrivileges := []enum.Privilege{
-		enum.PrivilegeCreateRole,
-		enum.PrivilegeCreateUser,
-		enum.PrivilegeCreateWarehouse,
-		enum.PrivilegeCreateDatabase,
-		enum.PrivilegeCreateIntegration,
-		enum.PrivilegeManageGrants,
-		enum.PrivilegeMonitorUsage,
-		enum.PrivilegeMonitorExecution,
-		enum.PrivilegeExecuteTask,
-		enum.PrivilegeExecuteManagedTask,
-		enum.PrivilegeOrganizationSupportCases,
-		enum.PrivilegeAccountSupportCases,
-		enum.PrivilegeUserSupportCases,
+	allowedPrivileges := []enum.Privilege{
+		// enum.PrivilegeCreateDatabaseRole, //Missing enum
+		enum.PrivilegeCreateSchema,
+		enum.PrivilegeImportedPrivileges,
+		enum.PrivilegeModify,
+		enum.PrivilegeMonitor,
+		enum.PrivilegeUsage,
 	}
-	return lo.Every(allowedAccountPrivileges, privileges)
+	return lo.Every(allowedPrivileges, privileges)
 }

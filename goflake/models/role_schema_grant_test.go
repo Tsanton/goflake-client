@@ -16,7 +16,7 @@ import (
 	u "github.com/tsanton/goflake-client/goflake/utilities"
 )
 
-func Test_grant_role_database_privilege(t *testing.T) {
+func Test_grant_role_schema_privilege(t *testing.T) {
 	/* Arrange */
 	cli := i.Goflake()
 	defer cli.Close()
@@ -28,36 +28,43 @@ func Test_grant_role_database_privilege(t *testing.T) {
 		Comment: "integration test goflake",
 		Owner:   "SYSADMIN",
 	}
+	schema := a.Schema{
+		Database: db,
+		Name:     "IGT_GRANT",
+		Comment:  "integration test goflake",
+		Owner:    "SYSADMIN",
+	}
 	role := a.Role{
 		Name:    "IGT_DEMO_ROLE",
 		Comment: "integration test goflake",
 		Owner:   "USERADMIN",
 	}
 	privilege := a.Grant{
-		Target:     &ag.DatabaseRoleGrant{RoleName: role.Name, DatabaseName: db.Name},
+		Target:     &ag.SchemaRoleGrant{RoleName: role.Name, DatabaseName: db.Name, SchemaName: schema.Name},
 		Privileges: []enums.Privilege{enums.PrivilegeUsage},
 	}
 
 	/* Act */
 	i.ErrorFailNow(t, g.RegisterAsset(cli, &db, &stack))
+	i.ErrorFailNow(t, g.RegisterAsset(cli, &schema, &stack))
 	i.ErrorFailNow(t, g.RegisterAsset(cli, &role, &stack))
 	i.ErrorFailNow(t, g.RegisterAsset(cli, &privilege, &stack))
 
-	res, err := g.Describe[*eg.RoleGrants](cli, &dg.RoleGrant{RoleName: "IGT_DEMO_ROLE"})
+	res, err := g.Describe[*eg.RoleGrants](cli, &dg.RoleGrant{RoleName: role.Name})
 
 	/* Assert */
 	i.ErrorFailNow(t, err)
 	assert.Equal(t, role.Name, res.RoleName)
 	assert.Len(t, res.Grants, 1)
-	dbUsage, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool {
+	schemaUsage, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool {
 		return i.Privilege == enums.Privilege(enums.PrivilegeUsage.String())
 	})
 	assert.True(t, ok)
-	assert.Equal(t, "SYSADMIN", dbUsage.GrantedBy)
-	assert.Equal(t, enums.SnowflakeObjectDatabase, dbUsage.GrantedOn)
+	assert.Equal(t, "SYSADMIN", schemaUsage.GrantedBy)
+	assert.Equal(t, enums.SnowflakeObjectSchema, schemaUsage.GrantedOn)
 }
 
-func Test_grant_role_database_privileges(t *testing.T) {
+func Test_grant_role_schema_privileges(t *testing.T) {
 	/* Arrange */
 	cli := i.Goflake()
 	defer cli.Close()
@@ -69,37 +76,44 @@ func Test_grant_role_database_privileges(t *testing.T) {
 		Comment: "integration test goflake",
 		Owner:   "SYSADMIN",
 	}
+	schema := a.Schema{
+		Database: db,
+		Name:     "IGT_GRANT",
+		Comment:  "integration test goflake",
+		Owner:    "SYSADMIN",
+	}
 	role := a.Role{
 		Name:    "IGT_DEMO_ROLE",
 		Comment: "integration test goflake",
 		Owner:   "USERADMIN",
 	}
 	privilege := a.Grant{
-		Target:     &ag.DatabaseRoleGrant{RoleName: role.Name, DatabaseName: db.Name},
+		Target:     &ag.SchemaRoleGrant{RoleName: role.Name, DatabaseName: db.Name, SchemaName: schema.Name},
 		Privileges: []enums.Privilege{enums.PrivilegeUsage, enums.PrivilegeMonitor},
 	}
 
 	/* Act */
 	i.ErrorFailNow(t, g.RegisterAsset(cli, &db, &stack))
+	i.ErrorFailNow(t, g.RegisterAsset(cli, &schema, &stack))
 	i.ErrorFailNow(t, g.RegisterAsset(cli, &role, &stack))
 	i.ErrorFailNow(t, g.RegisterAsset(cli, &privilege, &stack))
 
-	res, err := g.Describe[*eg.RoleGrants](cli, &dg.RoleGrant{RoleName: "IGT_DEMO_ROLE"})
+	res, err := g.Describe[*eg.RoleGrants](cli, &dg.RoleGrant{RoleName: role.Name})
 
 	/* Assert */
 	i.ErrorFailNow(t, err)
 	assert.Equal(t, role.Name, res.RoleName)
 	assert.Len(t, res.Grants, 2)
 
-	dbUsage, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool {
+	schemaUsage, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool {
 		return i.Privilege == enums.Privilege(enums.PrivilegeUsage.String())
 	})
 	assert.True(t, ok)
-	assert.Equal(t, "SYSADMIN", dbUsage.GrantedBy)
-	assert.Equal(t, enums.SnowflakeObjectDatabase, dbUsage.GrantedOn)
+	assert.Equal(t, "SYSADMIN", schemaUsage.GrantedBy)
+	assert.Equal(t, enums.SnowflakeObjectSchema, schemaUsage.GrantedOn)
 
-	dbMonitor, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool { return i.Privilege == enums.Privilege(enums.PrivilegeMonitor.String()) })
+	schemaMonitor, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool { return i.Privilege == enums.Privilege(enums.PrivilegeMonitor.String()) })
 	assert.True(t, ok)
-	assert.Equal(t, "SYSADMIN", dbMonitor.GrantedBy)
-	assert.Equal(t, enums.SnowflakeObjectDatabase, dbMonitor.GrantedOn)
+	assert.Equal(t, "SYSADMIN", schemaMonitor.GrantedBy)
+	assert.Equal(t, enums.SnowflakeObjectSchema, schemaMonitor.GrantedOn)
 }

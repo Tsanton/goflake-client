@@ -29,20 +29,33 @@ func (r *AccountRoleGrant) GetRevokeStatement(privileges []enum.Privilege) (stri
 }
 
 func (*AccountRoleGrant) validatePrivileges(privileges []enum.Privilege) bool {
-	allowedAccountPrivileges := []enum.Privilege{
-		enum.PrivilegeCreateRole,
-		enum.PrivilegeCreateUser,
-		enum.PrivilegeCreateWarehouse,
+	allowedPrivileges := []enum.Privilege{
+		enum.PrivilegeCreateAccount,
+		enum.PrivilegeCreateDataExchangeListing,
 		enum.PrivilegeCreateDatabase,
 		enum.PrivilegeCreateIntegration,
-		enum.PrivilegeManageGrants,
-		enum.PrivilegeMonitorUsage,
-		enum.PrivilegeMonitorExecution,
+		enum.PrivilegeCreateNetworkPolicy,
+		enum.PrivilegeCreateRole,
+		enum.PrivilegeCreateShare,
+		enum.PrivilegeCreateUser,
+		enum.PrivilegeCreateWarehouse,
+
+		enum.PrivilegeApplyMaskingPolicy,
+		// enum.PrivilegeApplyPasswordPolicy, //Missing enum
+		enum.PrivilegeApplyRowAccessPolicy,
+		// enum.PrivilegeApplySessionPolicy, //Missing enum
+		enum.PrivilegeApplyTag,
+		enum.PrivilegeAttachPolicy,
 		enum.PrivilegeExecuteTask,
+		enum.PrivilegeImportShare,
+		enum.PrivilegeManageGrants,
+		enum.PrivilegeMonitorExecution,
+		enum.PrivilegeMonitorUsage,
+		enum.PrivilegeOverrideShareRestrictions,
 		enum.PrivilegeExecuteManagedTask,
 		enum.PrivilegeOrganizationSupportCases,
 		enum.PrivilegeAccountSupportCases,
 		enum.PrivilegeUserSupportCases,
 	}
-	return lo.Every(allowedAccountPrivileges, privileges)
+	return lo.Every(allowedPrivileges, privileges)
 }
