@@ -37,8 +37,8 @@ func Test_create_role_relationship(t *testing.T) {
 
 	/* Act */
 	i.ErrorFailNow(t, g.RegisterAsset(cli, &rel, &stack))
-	child, cerr := g.Describe[*e.Role](cli, &d.Role{Name: rc.Name})
-	parent, perr := g.Describe[*e.Role](cli, &d.Role{Name: rp.Name})
+	child, cerr := g.Describe[e.Role](cli, &d.Role{Name: rc.Name})
+	parent, perr := g.Describe[e.Role](cli, &d.Role{Name: rp.Name})
 
 	/* Assert */
 	if cerr != nil || rc.Name != child.Name || child.GrantedToRoles != 1 {
