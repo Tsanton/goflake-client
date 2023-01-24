@@ -55,6 +55,8 @@ func (p SnowflakeObject) ToPlural() string {
 		return "PASSWORD POLICIES"
 	case SnowflakeObjectRowAccessPolicy:
 		return "ROW ACCESS POLICIES"
+	case SnowflakeObjectWarehouse:
+		return "WAREHOUSES"
 	default:
 		panic("not implemented")
 	}
@@ -83,4 +85,5 @@ const (
 	SnowflakeObjectMaskingPolicy   SnowflakeObject = "MASKING POLICY"
 	SnowflakeObjectPasswordPolicy  SnowflakeObject = "PASSWORD POLICY"
 	SnowflakeObjectRowAccessPolicy SnowflakeObject = "ROW ACCESS POLICY"
+	SnowflakeObjectWarehouse       SnowflakeObject = "WAREHOUSE"
 )
