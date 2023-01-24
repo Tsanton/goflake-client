@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.1](https://github.com/Tsanton/goflake-client/compare/v0.1.0...v0.1.1) (2023-01-24)
+
+
+### Features
+
+* added account & database grants ([3f11e88](https://github.com/Tsanton/goflake-client/commit/3f11e88a9744ed83aa0e926bde141460ae0156b4))
+* schema object future role grant ([d5b885d](https://github.com/Tsanton/goflake-client/commit/d5b885d0136c45ded8b73a04606ef22972ef4301))
+* schema role privileges ([aa43398](https://github.com/Tsanton/goflake-client/commit/aa43398d156a725933d6d3cb6ae3aa03a6b58b3d))
+
 ## [0.1.0](https://github.com/Tsanton/goflake-client/compare/v0.1.0...v0.1.0) (2023-01-19)
 
 
