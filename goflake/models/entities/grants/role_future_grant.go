@@ -7,7 +7,7 @@ import (
 
 type RoleFutureGrant struct {
 	Privilege       enum.Privilege       `json:"privilege"`
-	GrantedOn       enum.SnowflakeObject `json:"granted_on"`
+	GrantedOn       enum.SnowflakeObject `json:"grant_on"`
 	GrantTargetName string               `json:"name"`
 	GrantOption     string               `json:"grant_option"` //TODO: Bool and custom converter due to "true" & "false"
 }
