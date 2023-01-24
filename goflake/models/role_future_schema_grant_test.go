@@ -17,7 +17,7 @@ import (
 	u "github.com/tsanton/goflake-client/goflake/utilities"
 )
 
-func Test_grant_role_schema_future_object_privilege(t *testing.T) {
+func Test_grant_role_future_schema_privilege(t *testing.T) {
 	/* Arrange */
 	cli := i.Goflake()
 	defer cli.Close()
@@ -61,10 +61,11 @@ func Test_grant_role_schema_future_object_privilege(t *testing.T) {
 		return i.Privilege == enums.Privilege(enums.PrivilegeSelect.String())
 	})
 	assert.True(t, ok)
+	assert.Equal(t, schemaFutureSelect.GrantedOn, enums.SnowflakeObjectTable)
 	assert.Equal(t, fmt.Sprintf("%[1]s.%[2]s.<%[3]s>", db.Name, schema.Name, enums.SnowflakeObjectTable.ToSingular()), schemaFutureSelect.GrantTargetName)
 }
 
-func Test_grant_role_schema_future_object_privileges(t *testing.T) {
+func Test_grant_role_future_schema_privileges(t *testing.T) {
 	/* Arrange */
 	cli := i.Goflake()
 	defer cli.Close()
@@ -110,27 +111,25 @@ func Test_grant_role_schema_future_object_privileges(t *testing.T) {
 	assert.Equal(t, role.Name, res.RoleName)
 	assert.Len(t, res.Grants, 4)
 
-	tableSelect := fmt.Sprintf("%[1]s.%[2]s.<%[3]s>", db.Name, schema.Name, enums.SnowflakeObjectTable.ToSingular())
+	tableSchemaScope := fmt.Sprintf("%[1]s.%[2]s.<%[3]s>", db.Name, schema.Name, enums.SnowflakeObjectTable.ToSingular())
 	_, ok := lo.Find(res.Grants, func(i eg.RoleFutureGrant) bool {
-		return i.Privilege == enums.PrivilegeSelect && i.GrantTargetName == tableSelect
+		return i.Privilege == enums.PrivilegeSelect && i.GrantTargetName == tableSchemaScope
 	})
 	assert.True(t, ok)
 
-	tableUpdate := fmt.Sprintf("%[1]s.%[2]s.<%[3]s>", db.Name, schema.Name, enums.SnowflakeObjectTable.ToSingular())
 	_, ok = lo.Find(res.Grants, func(i eg.RoleFutureGrant) bool {
-		return i.Privilege == enums.PrivilegeUpdate && i.GrantTargetName == tableUpdate
+		return i.Privilege == enums.PrivilegeUpdate && i.GrantTargetName == tableSchemaScope
 	})
 	assert.True(t, ok)
 
-	viewSelect := fmt.Sprintf("%[1]s.%[2]s.<%[3]s>", db.Name, schema.Name, enums.SnowflakeObjectView.ToSingular())
+	viewSchemaScope := fmt.Sprintf("%[1]s.%[2]s.<%[3]s>", db.Name, schema.Name, enums.SnowflakeObjectView.ToSingular())
 	_, ok = lo.Find(res.Grants, func(i eg.RoleFutureGrant) bool {
-		return i.Privilege == enums.PrivilegeSelect && i.GrantTargetName == viewSelect
+		return i.Privilege == enums.PrivilegeSelect && i.GrantTargetName == viewSchemaScope
 	})
 	assert.True(t, ok)
 
-	viewReference := fmt.Sprintf("%[1]s.%[2]s.<%[3]s>", db.Name, schema.Name, enums.SnowflakeObjectView.ToSingular())
 	_, ok = lo.Find(res.Grants, func(i eg.RoleFutureGrant) bool {
-		return i.Privilege == enums.PrivilegeReferences && i.GrantTargetName == viewReference
+		return i.Privilege == enums.PrivilegeReferences && i.GrantTargetName == viewSchemaScope
 	})
 	assert.True(t, ok)
 }
