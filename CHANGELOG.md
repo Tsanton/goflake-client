@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/Tsanton/goflake-client/compare/v0.1.1...v0.1.2) (2023-01-24)
+
+
+### Bug Fixes
+
+* added warehouse ([a7425d8](https://github.com/Tsanton/goflake-client/commit/a7425d85d2f1a5a1ab5e07fbd10a3cfbb1608fb4))
+
 ## [0.1.1](https://github.com/Tsanton/goflake-client/compare/v0.1.0...v0.1.1) (2023-01-24)
 
 
