@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/Tsanton/goflake-client/compare/v0.1.2...v0.1.3) (2023-01-25)
+
+
+### Bug Fixes
+
+* RoleFutureGrant json attr name error ([aaa8d32](https://github.com/Tsanton/goflake-client/commit/aaa8d32c2f957785e387fc662f50acf838dd2760))
+
 ## [0.1.2](https://github.com/Tsanton/goflake-client/compare/v0.1.1...v0.1.2) (2023-01-24)
 
 
