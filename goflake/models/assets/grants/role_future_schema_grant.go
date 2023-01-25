@@ -32,11 +32,11 @@ func (r *RoleFutureSchemaGrant) GetRevokeStatement(privileges []enum.Privilege) 
 }
 
 func (r *RoleFutureSchemaGrant) validatePrivileges(privileges []enum.Privilege) bool {
-	var allowedAccountPrivileges []enum.Privilege
+	var allowedPrivileges []enum.Privilege
 
 	switch r.ObjectType {
 	case enum.SnowflakeObjectTable:
-		allowedAccountPrivileges = []enum.Privilege{
+		allowedPrivileges = []enum.Privilege{
 			enum.PrivilegeSelect,
 			enum.PrivilegeInsert,
 			enum.PrivilegeUpdate,
@@ -46,49 +46,49 @@ func (r *RoleFutureSchemaGrant) validatePrivileges(privileges []enum.Privilege) 
 			enum.PrivilegeOwnership,
 		}
 	case enum.SnowflakeObjectView, enum.SnowflakeObjectMatView:
-		allowedAccountPrivileges = []enum.Privilege{
+		allowedPrivileges = []enum.Privilege{
 			enum.PrivilegeSelect,
 			enum.PrivilegeReferences,
 			enum.PrivilegeOwnership,
 		}
 	case enum.SnowflakeObjectSequence, enum.SnowflakeObjectFunction, enum.SnowflakeObjectProcedure, enum.SnowflakeObjectFileFormat:
-		allowedAccountPrivileges = []enum.Privilege{
+		allowedPrivileges = []enum.Privilege{
 			enum.PrivilegeUsage,
 			enum.PrivilegeOwnership,
 		}
 	case enum.SnowflakeObjectInternalStage:
-		allowedAccountPrivileges = []enum.Privilege{
+		allowedPrivileges = []enum.Privilege{
 			enum.PrivilegeRead,
 			enum.PrivilegeWrite,
 			enum.PrivilegeOwnership,
 		}
 	case enum.SnowflakeObjectExternalStage:
-		allowedAccountPrivileges = []enum.Privilege{
+		allowedPrivileges = []enum.Privilege{
 			enum.PrivilegeUsage,
-			enum.PrivilegeOwnership, //?
+			enum.PrivilegeOwnership,
 		}
 	case enum.SnowflakeObjectPipe:
-		allowedAccountPrivileges = []enum.Privilege{
+		allowedPrivileges = []enum.Privilege{
 			enum.PrivilegeMonitor,
 			enum.PrivilegeOperate,
 			enum.PrivilegeOwnership,
 		}
 	case enum.SnowflakeObjectStream:
-		allowedAccountPrivileges = []enum.Privilege{
+		allowedPrivileges = []enum.Privilege{
 			enum.PrivilegeSelect,
 			enum.PrivilegeOwnership,
 		}
 	case enum.SnowflakeObjectTask:
-		allowedAccountPrivileges = []enum.Privilege{
+		allowedPrivileges = []enum.Privilege{
 			enum.PrivilegeMonitor,
 			enum.PrivilegeOperate,
 			enum.PrivilegeOwnership,
 		}
 	case enum.SnowflakeObjectMaskingPolicy, enum.SnowflakeObjectPasswordPolicy, enum.SnowflakeObjectRowAccessPolicy, enum.SnowflakeObjectTag:
-		allowedAccountPrivileges = []enum.Privilege{
+		allowedPrivileges = []enum.Privilege{
 			enum.PrivilegeApply,
 			enum.PrivilegeOwnership,
 		}
 	}
-	return lo.Every(allowedAccountPrivileges, privileges)
+	return lo.Every(allowedPrivileges, privileges)
 }
