@@ -13,7 +13,7 @@ import (
 	u "github.com/tsanton/goflake-client/goflake/utilities"
 )
 
-func Test_create_database(t *testing.T) {
+func Test_create_database_role(t *testing.T) {
 	/* Arrange */
 	cli := i.Goflake()
 	defer cli.Close()
@@ -21,16 +21,24 @@ func Test_create_database(t *testing.T) {
 	defer g.DeleteAssets(cli, &stack)
 
 	db := a.Database{
-		Name:    "IGT_DEMO",
+		Name:    "IGT_DATABASE_ROLES",
 		Comment: "integration test goflake",
 		Owner:   "SYSADMIN",
 	}
 
+	role := a.DatabaseRole{
+		Name:         "IGT_DEMO_ROLE",
+		DatabaseName: db.Name,
+		Comment:      "integration test goflake",
+		Owner:        "USERADMIN",
+	}
+
 	/* Act */
 	i.ErrorFailNow(t, g.RegisterAsset(cli, &db, &stack))
+	i.ErrorFailNow(t, g.RegisterAsset(cli, &role, &stack))
 }
 
-func Test_describe_database(t *testing.T) {
+func Test_describe_database_role(t *testing.T) {
 	/* Arrange */
 	cli := i.Goflake()
 	defer cli.Close()
@@ -38,16 +46,27 @@ func Test_describe_database(t *testing.T) {
 	defer g.DeleteAssets(cli, &stack)
 
 	db := a.Database{
-		Name:    "IGT_DEMO",
+		Name:    "IGT_DATABASE_ROLES",
 		Comment: "integration test goflake",
 		Owner:   "SYSADMIN",
 	}
+
+	role := a.DatabaseRole{
+		Name:         "IGT_DEMO_ROLE",
+		DatabaseName: db.Name,
+		Comment:      "integration test goflake",
+		Owner:        "USERADMIN",
+	}
+
 	i.ErrorFailNow(t, g.RegisterAsset(cli, &db, &stack))
+	i.ErrorFailNow(t, g.RegisterAsset(cli, &role, &stack))
 
 	/* Act */
-	ddb, err := g.Describe[e.Database](cli, &d.Database{Name: db.Name})
+	dr, err := g.Describe[e.Role](cli, &d.DatabaseRole{Name: role.Name, DatabaseName: db.Name})
 	i.ErrorFailNow(t, err)
 
 	/* Assert */
-	assert.Equal(t, ddb.Name, db.Name)
+	assert.Equal(t, role.Name, dr.Name)
+	assert.Equal(t, role.Owner, dr.Owner)
+	assert.Equal(t, role.DatabaseName, db.Name)
 }

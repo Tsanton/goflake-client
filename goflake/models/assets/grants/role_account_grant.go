@@ -5,30 +5,38 @@ import (
 	"strings"
 
 	"github.com/samber/lo"
+
+	i "github.com/tsanton/goflake-client/goflake/models/assets/interface"
 	enum "github.com/tsanton/goflake-client/goflake/models/enums"
 )
 
 var (
-	_ ISnowflakeGrant = &RoleAccountGrant{}
+	_ ISnowflakeGrant = &RoleAccountGrant[i.ISnowflakeRole]{}
 )
 
-type RoleAccountGrant struct {
-	RoleName string
+type RoleAccountGrant[T i.ISnowflakeRole] struct {
+	Role T
 }
 
-func (r *RoleAccountGrant) GetGrantStatement(privileges []enum.Privilege) (string, int) {
+func (r *RoleAccountGrant[T]) GetGrantStatement(privileges []enum.Privilege) (string, int) {
 	stringPrivileges := lo.Map(privileges, func(x enum.Privilege, index int) string { return x.String() })
 	privs := strings.Join(stringPrivileges, ", ")
-	return fmt.Sprintf("GRANT %[1]s ON ACCOUNT TO ROLE %[2]s;", privs, r.RoleName), 1
+	if r.Role.IsDatabaseRole() {
+		panic("you can't grant account level privileges to database roles")
+	}
+	return fmt.Sprintf("GRANT %[1]s ON ACCOUNT TO ROLE %[2]s;", privs, r.Role.GetIdentifier()), 1
 }
 
-func (r *RoleAccountGrant) GetRevokeStatement(privileges []enum.Privilege) (string, int) {
+func (r *RoleAccountGrant[T]) GetRevokeStatement(privileges []enum.Privilege) (string, int) {
 	stringPrivileges := lo.Map(privileges, func(x enum.Privilege, index int) string { return x.String() })
 	privs := strings.Join(stringPrivileges, ", ")
-	return fmt.Sprintf("REVOKE %[1]s ON ACCOUNT FROM ROLE %[2]s CASCADE;", privs, r.RoleName), 1
+	if r.Role.IsDatabaseRole() {
+		panic("you can't neither grant nor revoke account level privileges to/from database roles")
+	}
+	return fmt.Sprintf("REVOKE %[1]s ON ACCOUNT FROM ROLE %[2]s CASCADE;", privs, r.Role.GetIdentifier()), 1
 }
 
-func (*RoleAccountGrant) validatePrivileges(privileges []enum.Privilege) bool {
+func (*RoleAccountGrant[T]) validatePrivileges(privileges []enum.Privilege) bool {
 	allowedPrivileges := []enum.Privilege{
 		enum.PrivilegeCreateAccount,
 		enum.PrivilegeCreateDataExchangeListing,

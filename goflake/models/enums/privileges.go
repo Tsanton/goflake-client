@@ -16,6 +16,7 @@ const (
 	PrivilegeReferences                Privilege = "REFERENCES"
 	PrivilegeRebuild                   Privilege = "REBUILD"
 	PrivilegeCreateSchema              Privilege = "CREATE SCHEMA"
+	PrivilegeCreateDatabaseRole        Privilege = "CREATE DATABASE ROLE"
 	PrivilegeImportedPrivileges        Privilege = "IMPORTED PRIVILEGES"
 	PrivilegeModify                    Privilege = "MODIFY"
 	PrivilegeOperate                   Privilege = "OPERATE"
@@ -85,13 +86,4 @@ func (ps PrivilegeSet) ToList() []string {
 		privs = append(privs, string(p))
 	}
 	return privs
-}
-
-func (ps PrivilegeSet) addString(s string) {
-	ps[Privilege(s)] = struct{}{}
-}
-
-func (ps PrivilegeSet) hasString(s string) bool {
-	_, ok := ps[Privilege(s)]
-	return ok
 }

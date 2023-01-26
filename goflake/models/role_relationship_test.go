@@ -6,6 +6,7 @@ import (
 	g "github.com/tsanton/goflake-client/goflake"
 	i "github.com/tsanton/goflake-client/goflake/integration"
 	a "github.com/tsanton/goflake-client/goflake/models/assets"
+	ai "github.com/tsanton/goflake-client/goflake/models/assets/interface"
 	d "github.com/tsanton/goflake-client/goflake/models/describables"
 	e "github.com/tsanton/goflake-client/goflake/models/entities"
 	u "github.com/tsanton/goflake-client/goflake/utilities"
@@ -14,7 +15,7 @@ import (
 func Test_create_role_relationship(t *testing.T) {
 	cli := i.Goflake()
 	defer cli.Close()
-	stack := u.Stack[a.ISnowflakeAsset]{}
+	stack := u.Stack[ai.ISnowflakeAsset]{}
 	defer g.DeleteAssets(cli, &stack)
 
 	/* Arrange */
@@ -53,7 +54,7 @@ func Test_create_role_relationship(t *testing.T) {
 func Test_describe_role_relationship(t *testing.T) {
 	cli := i.Goflake()
 	defer cli.Close()
-	stack := u.Stack[a.ISnowflakeAsset]{}
+	stack := u.Stack[ai.ISnowflakeAsset]{}
 	defer g.DeleteAssets(cli, &stack)
 
 	/* Arrange */

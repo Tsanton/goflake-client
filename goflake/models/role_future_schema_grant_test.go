@@ -11,6 +11,7 @@ import (
 	i "github.com/tsanton/goflake-client/goflake/integration"
 	a "github.com/tsanton/goflake-client/goflake/models/assets"
 	ag "github.com/tsanton/goflake-client/goflake/models/assets/grants"
+	ai "github.com/tsanton/goflake-client/goflake/models/assets/interface"
 	dg "github.com/tsanton/goflake-client/goflake/models/describables/grants"
 	eg "github.com/tsanton/goflake-client/goflake/models/entities/grants"
 	"github.com/tsanton/goflake-client/goflake/models/enums"
@@ -21,7 +22,7 @@ func Test_grant_role_future_schema_privilege(t *testing.T) {
 	/* Arrange */
 	cli := i.Goflake()
 	defer cli.Close()
-	stack := u.Stack[a.ISnowflakeAsset]{}
+	stack := u.Stack[ai.ISnowflakeAsset]{}
 	defer g.DeleteAssets(cli, &stack)
 
 	db := a.Database{
@@ -41,7 +42,7 @@ func Test_grant_role_future_schema_privilege(t *testing.T) {
 		Owner:   "USERADMIN",
 	}
 	privilege := a.Grant{
-		Target:     &ag.RoleFutureSchemaGrant{RoleName: role.Name, DatabaseName: db.Name, SchemaName: schema.Name, ObjectType: enums.SnowflakeObjectTable},
+		Target:     &ag.RoleFutureSchemaGrant[*a.Role]{Role: &role, DatabaseName: db.Name, SchemaName: schema.Name, ObjectType: enums.SnowflakeObjectTable},
 		Privileges: []enums.Privilege{enums.PrivilegeSelect},
 	}
 
@@ -69,7 +70,7 @@ func Test_grant_role_future_schema_privileges(t *testing.T) {
 	/* Arrange */
 	cli := i.Goflake()
 	defer cli.Close()
-	stack := u.Stack[a.ISnowflakeAsset]{}
+	stack := u.Stack[ai.ISnowflakeAsset]{}
 	defer g.DeleteAssets(cli, &stack)
 
 	db := a.Database{
@@ -89,11 +90,11 @@ func Test_grant_role_future_schema_privileges(t *testing.T) {
 		Owner:   "USERADMIN",
 	}
 	privilege1 := a.Grant{
-		Target:     &ag.RoleFutureSchemaGrant{RoleName: role.Name, DatabaseName: db.Name, SchemaName: schema.Name, ObjectType: enums.SnowflakeObjectTable},
+		Target:     &ag.RoleFutureSchemaGrant[*a.Role]{Role: &role, DatabaseName: db.Name, SchemaName: schema.Name, ObjectType: enums.SnowflakeObjectTable},
 		Privileges: []enums.Privilege{enums.PrivilegeSelect, enums.PrivilegeUpdate},
 	}
 	privilege2 := a.Grant{
-		Target:     &ag.RoleFutureSchemaGrant{RoleName: role.Name, DatabaseName: db.Name, SchemaName: schema.Name, ObjectType: enums.SnowflakeObjectView},
+		Target:     &ag.RoleFutureSchemaGrant[*a.Role]{Role: &role, DatabaseName: db.Name, SchemaName: schema.Name, ObjectType: enums.SnowflakeObjectView},
 		Privileges: []enums.Privilege{enums.PrivilegeSelect, enums.PrivilegeReferences},
 	}
 

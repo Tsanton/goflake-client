@@ -1,9 +1,13 @@
 package assets
 
-import "fmt"
+import (
+	"fmt"
+
+	i "github.com/tsanton/goflake-client/goflake/models/assets/interface"
+)
 
 var (
-	_ ISnowflakeAsset = &Database{}
+	_ i.ISnowflakeAsset = &Database{}
 )
 
 type Database struct {

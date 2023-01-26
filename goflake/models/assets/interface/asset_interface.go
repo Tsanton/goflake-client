@@ -1,4 +1,4 @@
-package assets
+package inter
 
 type ISnowflakeAsset interface {
 	GetCreateStatement() (string, int)

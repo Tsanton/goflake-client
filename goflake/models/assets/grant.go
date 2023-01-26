@@ -2,11 +2,12 @@ package assets
 
 import (
 	gra "github.com/tsanton/goflake-client/goflake/models/assets/grants"
+	i "github.com/tsanton/goflake-client/goflake/models/assets/interface"
 	enum "github.com/tsanton/goflake-client/goflake/models/enums"
 )
 
 var (
-	_ ISnowflakeAsset = &Grant{}
+	_ i.ISnowflakeAsset = &Grant{}
 )
 
 type Grant struct {

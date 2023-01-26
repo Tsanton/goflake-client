@@ -10,6 +10,7 @@ import (
 	i "github.com/tsanton/goflake-client/goflake/integration"
 	a "github.com/tsanton/goflake-client/goflake/models/assets"
 	ag "github.com/tsanton/goflake-client/goflake/models/assets/grants"
+	ai "github.com/tsanton/goflake-client/goflake/models/assets/interface"
 	dg "github.com/tsanton/goflake-client/goflake/models/describables/grants"
 	eg "github.com/tsanton/goflake-client/goflake/models/entities/grants"
 	"github.com/tsanton/goflake-client/goflake/models/enums"
@@ -20,7 +21,7 @@ func Test_grant_role_schema_privilege(t *testing.T) {
 	/* Arrange */
 	cli := i.Goflake()
 	defer cli.Close()
-	stack := u.Stack[a.ISnowflakeAsset]{}
+	stack := u.Stack[ai.ISnowflakeAsset]{}
 	defer g.DeleteAssets(cli, &stack)
 
 	db := a.Database{
@@ -40,7 +41,7 @@ func Test_grant_role_schema_privilege(t *testing.T) {
 		Owner:   "USERADMIN",
 	}
 	privilege := a.Grant{
-		Target:     &ag.RoleSchemaGrant{RoleName: role.Name, DatabaseName: db.Name, SchemaName: schema.Name},
+		Target:     &ag.RoleSchemaGrant[*a.Role]{Role: &role, DatabaseName: db.Name, SchemaName: schema.Name},
 		Privileges: []enums.Privilege{enums.PrivilegeUsage},
 	}
 
@@ -66,7 +67,7 @@ func Test_grant_role_schema_privileges(t *testing.T) {
 	/* Arrange */
 	cli := i.Goflake()
 	defer cli.Close()
-	stack := u.Stack[a.ISnowflakeAsset]{}
+	stack := u.Stack[ai.ISnowflakeAsset]{}
 	defer g.DeleteAssets(cli, &stack)
 
 	db := a.Database{
@@ -86,7 +87,7 @@ func Test_grant_role_schema_privileges(t *testing.T) {
 		Owner:   "USERADMIN",
 	}
 	privilege := a.Grant{
-		Target:     &ag.RoleSchemaGrant{RoleName: role.Name, DatabaseName: db.Name, SchemaName: schema.Name},
+		Target:     &ag.RoleSchemaGrant[*a.Role]{Role: &role, DatabaseName: db.Name, SchemaName: schema.Name},
 		Privileges: []enums.Privilege{enums.PrivilegeUsage, enums.PrivilegeMonitor},
 	}
 

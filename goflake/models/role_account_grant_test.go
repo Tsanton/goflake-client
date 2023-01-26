@@ -10,6 +10,7 @@ import (
 	i "github.com/tsanton/goflake-client/goflake/integration"
 	a "github.com/tsanton/goflake-client/goflake/models/assets"
 	ag "github.com/tsanton/goflake-client/goflake/models/assets/grants"
+	ai "github.com/tsanton/goflake-client/goflake/models/assets/interface"
 	dg "github.com/tsanton/goflake-client/goflake/models/describables/grants"
 	eg "github.com/tsanton/goflake-client/goflake/models/entities/grants"
 	"github.com/tsanton/goflake-client/goflake/models/enums"
@@ -20,7 +21,7 @@ func Test_grant_role_account_privilege(t *testing.T) {
 	/* Arrange */
 	cli := i.Goflake()
 	defer cli.Close()
-	stack := u.Stack[a.ISnowflakeAsset]{}
+	stack := u.Stack[ai.ISnowflakeAsset]{}
 	defer g.DeleteAssets(cli, &stack)
 
 	role := a.Role{
@@ -29,7 +30,7 @@ func Test_grant_role_account_privilege(t *testing.T) {
 		Owner:   "USERADMIN",
 	}
 	privilege := a.Grant{
-		Target:     &ag.RoleAccountGrant{RoleName: role.Name},
+		Target:     &ag.RoleAccountGrant[*a.Role]{Role: &role},
 		Privileges: []enums.Privilege{enums.PrivilegeCreateAccount},
 	}
 
@@ -44,7 +45,7 @@ func Test_grant_role_account_privilege(t *testing.T) {
 	assert.Equal(t, role.Name, res.RoleName)
 	assert.Len(t, res.Grants, 1)
 	createAcc, ok := lo.Find(res.Grants, func(i eg.RoleGrant) bool {
-		return i.Privilege == enums.Privilege(enums.PrivilegeCreateAccount.String())
+		return i.Privilege == enums.PrivilegeCreateAccount
 	})
 	assert.True(t, ok)
 	assert.Equal(t, "ACCOUNTADMIN", createAcc.GrantedBy)
@@ -55,7 +56,7 @@ func Test_grant_role_account_privileges(t *testing.T) {
 	/* Arrange */
 	cli := i.Goflake()
 	defer cli.Close()
-	stack := u.Stack[a.ISnowflakeAsset]{}
+	stack := u.Stack[ai.ISnowflakeAsset]{}
 	defer g.DeleteAssets(cli, &stack)
 
 	role := a.Role{
@@ -64,7 +65,7 @@ func Test_grant_role_account_privileges(t *testing.T) {
 		Owner:   "USERADMIN",
 	}
 	privilege := a.Grant{
-		Target:     &ag.RoleAccountGrant{RoleName: role.Name},
+		Target:     &ag.RoleAccountGrant[*a.Role]{Role: &role},
 		Privileges: []enums.Privilege{enums.PrivilegeCreateAccount, enums.PrivilegeCreateUser},
 	}
 

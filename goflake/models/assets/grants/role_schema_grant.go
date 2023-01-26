@@ -5,32 +5,39 @@ import (
 	"strings"
 
 	"github.com/samber/lo"
+	i "github.com/tsanton/goflake-client/goflake/models/assets/interface"
 	enum "github.com/tsanton/goflake-client/goflake/models/enums"
 )
 
 var (
-	_ ISnowflakeGrant = &RoleSchemaGrant{}
+	_ ISnowflakeGrant = &RoleSchemaGrant[i.ISnowflakeRole]{}
 )
 
-type RoleSchemaGrant struct {
-	RoleName     string
+type RoleSchemaGrant[T i.ISnowflakeRole] struct {
+	Role         T
 	DatabaseName string
 	SchemaName   string
 }
 
-func (r *RoleSchemaGrant) GetGrantStatement(privileges []enum.Privilege) (string, int) {
+func (r *RoleSchemaGrant[T]) GetGrantStatement(privileges []enum.Privilege) (string, int) {
 	stringPrivileges := lo.Map(privileges, func(x enum.Privilege, index int) string { return x.String() })
 	priv := strings.Join(stringPrivileges, ", ")
-	return fmt.Sprintf("GRANT %[1]s ON SCHEMA %[2]s.%[3]s TO ROLE %[4]s;", priv, r.DatabaseName, r.SchemaName, r.RoleName), 1
+	if r.Role.IsDatabaseRole() {
+		panic("Database role not implementer")
+	}
+	return fmt.Sprintf("GRANT %[1]s ON SCHEMA %[2]s.%[3]s TO ROLE %[4]s;", priv, r.DatabaseName, r.SchemaName, r.Role.GetIdentifier()), 1
 }
 
-func (r *RoleSchemaGrant) GetRevokeStatement(privileges []enum.Privilege) (string, int) {
+func (r *RoleSchemaGrant[T]) GetRevokeStatement(privileges []enum.Privilege) (string, int) {
 	stringPrivileges := lo.Map(privileges, func(x enum.Privilege, index int) string { return x.String() })
 	priv := strings.Join(stringPrivileges, ", ")
-	return fmt.Sprintf("REVOKE %[1]s ON SCHEMA %[2]s.%[3]s FROM ROLE %[4]s CASCADE;", priv, r.DatabaseName, r.SchemaName, r.RoleName), 1
+	if r.Role.IsDatabaseRole() {
+		panic("Database role not implementer")
+	}
+	return fmt.Sprintf("REVOKE %[1]s ON SCHEMA %[2]s.%[3]s FROM ROLE %[4]s CASCADE;", priv, r.DatabaseName, r.SchemaName, r.Role.GetIdentifier()), 1
 }
 
-func (*RoleSchemaGrant) validatePrivileges(privileges []enum.Privilege) bool {
+func (*RoleSchemaGrant[T]) validatePrivileges(privileges []enum.Privilege) bool {
 	allowedAccountPrivileges := []enum.Privilege{
 		enum.PrivilegeModify,
 		enum.PrivilegeMonitor,

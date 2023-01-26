@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	a "github.com/tsanton/goflake-client/goflake/models/assets"
+	ai "github.com/tsanton/goflake-client/goflake/models/assets/interface"
 	d "github.com/tsanton/goflake-client/goflake/models/describables"
 	e "github.com/tsanton/goflake-client/goflake/models/entities"
 	m "github.com/tsanton/goflake-client/goflake/models/mergeables"
@@ -27,19 +27,19 @@ func ExecuteScalar[T executeScalarConstraint](g *GoflakeClient, query string) (T
 	return ret, nil
 }
 
-func RegisterAsset(g *GoflakeClient, asset a.ISnowflakeAsset, stack *u.Stack[a.ISnowflakeAsset]) error {
+func RegisterAsset(g *GoflakeClient, asset ai.ISnowflakeAsset, stack *u.Stack[ai.ISnowflakeAsset]) error {
 	stack.Put(asset)
 	return CreateAsset(g, asset)
 }
 
-func CreateAsset(g *GoflakeClient, asset a.ISnowflakeAsset) error {
+func CreateAsset(g *GoflakeClient, asset ai.ISnowflakeAsset) error {
 	query, numStatements := asset.GetCreateStatement()
 	multiStatementContext, _ := gosnowflake.WithMultiStatement(context.Background(), numStatements)
 	_, err := g.db.ExecContext(multiStatementContext, query)
 	return err
 }
 
-func DeleteAssets(g *GoflakeClient, stack *u.Stack[a.ISnowflakeAsset]) {
+func DeleteAssets(g *GoflakeClient, stack *u.Stack[ai.ISnowflakeAsset]) {
 	for !stack.IsEmpty() {
 		err := DeleteAsset(g, stack.Get())
 		if err != nil {
@@ -48,7 +48,7 @@ func DeleteAssets(g *GoflakeClient, stack *u.Stack[a.ISnowflakeAsset]) {
 	}
 }
 
-func DeleteAsset(g *GoflakeClient, asset a.ISnowflakeAsset) error {
+func DeleteAsset(g *GoflakeClient, asset ai.ISnowflakeAsset) error {
 	query, numStatements := asset.GetDeleteStatement()
 	multiStatementContext, _ := gosnowflake.WithMultiStatement(context.Background(), numStatements)
 	_, err := g.db.ExecContext(multiStatementContext, query)
